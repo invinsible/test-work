@@ -28,22 +28,31 @@ const apiPathes = apiTemplatesSet1.map(apiPathTemplate => {
     });
 
 function getApiPath(obj, template) {     
-    let result = '';      
+    let result = '';
+    
+    // Функция для очистки шаблона от символа
+    cleanSymbol = (symbol = '%') => {
+        result = template.replace(new RegExp(symbol,'g'), '');
+        return result
+    };     
 
-    const replacer = (static, ...dynamic) => {
+    replacer = (static, ...dynamic) => {        
+        
+        //Убираем знак процента
+        cleanSymbol();        
+        
         //Первый аргумент для замены одинаковой части по всех строках
-        let transformStroke = template.replace(/%/g, '');
-        transformStroke = transformStroke.replace(static, obj[static]);
+        result = result.replace(static, obj[static]);
         
         //Перебор следующих аргументов для замены в шаблоне
         dynamic.forEach(function(item) {            
-            transformStroke = transformStroke.replace(item, obj[item]);            
+            result = result.replace(item, obj[item]);            
         });
         
         //Заменям в готовом результате пробелы на спец.символы
-        transformStroke = transformStroke.replace(/ /g, '%20');
+        result = result.replace(/ /g, '%20');
 
-        return transformStroke;
+        return result;
     }    
     
     result = replacer('id', 'name', 'role', 'salary');   
